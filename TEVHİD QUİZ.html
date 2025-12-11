@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Tevhid Quiz - Günahlardan Sakın</title>
+  <title>Tevhid Quiz</title>
   <style>
     * {
       box-sizing: border-box;
@@ -22,66 +22,67 @@
 
     .app {
       width: 100%;
-      max-width: 900px;
-      padding: 16px;
+      max-width: 480px;      /* DİKEY DAR KUTU */
+      padding: 12px;
     }
 
     .card {
       background: radial-gradient(circle at top, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
       border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      padding: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.65);
       border: 1px solid rgba(148,163,184,0.5);
       position: relative;
       overflow: hidden;
+      min-height: 80vh;      /* YÜKSEK DİKEY BOY */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .glow {
       position: absolute;
       inset: -40%;
       background:
-        radial-gradient(circle at 10% 0%, rgba(34,197,94,0.2), transparent 55%),
-        radial-gradient(circle at 90% 0%, rgba(56,189,248,0.2), transparent 60%);
-      opacity: 0.45;
+        radial-gradient(circle at 10% 0%, rgba(34,197,94,0.25), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(56,189,248,0.25), transparent 60%);
+      opacity: 0.5;
       pointer-events: none;
     }
 
     .header {
       position: relative;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
+      flex-direction: column;
+      gap: 6px;
       z-index: 1;
-      flex-wrap: wrap;
     }
 
     .title-block h1 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       color: #f9fafb;
     }
 
     .title-block p {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #cbd5f5;
-      max-width: 420px;
     }
 
     .stats {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      justify-content: space-between;
       align-items: center;
-      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
     }
 
     .stat {
-      text-align: right;
       min-width: 70px;
     }
 
     .stat-label {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #9ca3af;
     }
 
@@ -90,17 +91,9 @@
       font-weight: 700;
     }
 
-    #scoreDisplay {
-      color: #22c55e;
-    }
-
-    #questionIndexDisplay {
-      color: #38bdf8;
-    }
-
-    #timeDisplay {
-      color: #fbbf24;
-    }
+    #scoreDisplay { color: #22c55e; }
+    #questionIndexDisplay { color: #38bdf8; }
+    #timeDisplay { color: #fbbf24; }
 
     .badge {
       font-size: 0.75rem;
@@ -110,45 +103,9 @@
       color: #e5e7eb;
     }
 
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 8px 18px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.15s ease, opacity 0.15s ease;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: #022c22;
-      box-shadow: 0 10px 24px rgba(34,197,94,0.45);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 30px rgba(34,197,94,0.6);
-    }
-
-    .btn-primary:active {
-      transform: translateY(1px) scale(0.97);
-      box-shadow: 0 8px 16px rgba(34,197,94,0.5);
-    }
-
-    .btn-secondary {
-      background: rgba(15,23,42,0.9);
-      color: #e5e7eb;
-      border: 1px solid rgba(148,163,184,0.7);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(30,64,175,0.8);
-    }
-
     .progress-bar {
       position: relative;
-      margin-top: 12px;
+      margin-top: 8px;
       height: 8px;
       border-radius: 999px;
       background: rgba(15,23,42,0.9);
@@ -168,17 +125,23 @@
 
     .content {
       position: relative;
-      margin-top: 14px;
+      margin-top: 10px;
       z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .question-card {
       background: rgba(15,23,42,0.96);
       border-radius: 16px;
-      padding: 14px 16px;
+      padding: 12px;
       border: 1px solid rgba(148,163,184,0.6);
       box-shadow: 0 10px 24px rgba(0,0,0,0.6);
       animation: fadeIn 0.25s ease-out;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     @keyframes fadeIn {
@@ -186,33 +149,37 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .question-text {
-      font-size: 1rem;
-      margin-bottom: 8px;
+    .question-theme {
+      font-size: 0.82rem;
+      color: #9ca3af;
+      margin-bottom: 4px;
     }
 
-    .question-theme {
-      font-size: 0.8rem;
-      color: #9ca3af;
+    .question-text {
+      font-size: 1rem;      /* DAHA BÜYÜK YAZI */
       margin-bottom: 6px;
+      line-height: 1.4;
     }
 
     .options {
-      margin-top: 10px;
+      margin-top: 8px;
       display: grid;
       gap: 8px;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 3px;
     }
 
     .option-btn {
       width: 100%;
       text-align: left;
-      padding: 10px 12px;
+      padding: 9px 10px;
       border-radius: 12px;
       border: 1px solid rgba(148,163,184,0.6);
       background: rgba(15,23,42,0.95);
       color: #e5e7eb;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.95rem;   /* DAHA BÜYÜK */
       display: flex;
       gap: 8px;
       align-items: center;
@@ -227,8 +194,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #cbd5f5;
+      flex-shrink: 0;
     }
 
     .option-text {
@@ -269,36 +237,70 @@
     }
 
     .feedback {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      min-height: 34px;
+      margin-top: 6px;
+      font-size: 0.86rem;
+      min-height: 36px;
       color: #e5e7eb;
     }
 
-    .feedback.good {
-      color: #bbf7d0;
-    }
-
-    .feedback.bad {
-      color: #fecaca;
-    }
+    .feedback.good { color: #bbf7d0; }
+    .feedback.bad { color: #fecaca; }
 
     .controls {
-      margin-top: 10px;
+      margin-top: 8px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #022c22;
+      box-shadow: 0 10px 20px rgba(34,197,94,0.45);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(34,197,94,0.6);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: 0 8px 16px rgba(34,197,94,0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      border: 1px solid rgba(148,163,184,0.7);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(30,64,175,0.8);
     }
 
     .helper-text {
       font-size: 0.78rem;
       color: #9ca3af;
-      margin-top: 6px;
+      margin-top: 4px;
     }
-
-    /* Start / Result overlay */
 
     .overlay {
       position: absolute;
@@ -308,7 +310,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       text-align: center;
       padding: 18px;
       z-index: 5;
@@ -322,19 +324,19 @@
     .overlay p {
       font-size: 0.9rem;
       color: #e5e7eb;
-      max-width: 430px;
+      max-width: 380px;
     }
 
     .overlay-badges {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       justify-content: center;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
 
     .overlay-badge {
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 999px;
       border: 1px solid rgba(148,163,184,0.7);
       color: #cbd5f5;
@@ -343,7 +345,7 @@
     .overlay-note {
       font-size: 0.78rem;
       color: #9ca3af;
-      max-width: 460px;
+      max-width: 380px;
     }
 
     .score-big {
@@ -352,16 +354,9 @@
       color: #22c55e;
     }
 
-    @media (max-width: 650px) {
-      .card {
-        padding: 14px;
-      }
-      .title-block h1 {
-        font-size: 1.25rem;
-      }
-      .question-text {
-        font-size: 0.95rem;
-      }
+    @media (max-width: 480px) {
+      .card { min-height: 100vh; border-radius: 0; }
+      .app { max-width: 100%; padding: 0; }
     }
   </style>
 </head>
@@ -374,8 +369,8 @@
       <div class="title-block">
         <h1>Tevhid Quiz</h1>
         <p>
-          Tevhid, şirk ve bid‘at hususundaki konuları öğren. Her doğru cevapla ilim puanı kazan,
-          yanlışlardan ders al!
+          Tevhid, şirk ve bid‘at hususlarını öğrenmek için soruları cevapla.
+          Doğru cevaplarda ilim puanları kazan, yanlışlardan da ders çıkar.
         </p>
       </div>
       <div class="stats">
@@ -391,7 +386,7 @@
           <div class="stat-label">Zaman</div>
           <div class="stat-value" id="timeDisplay">00:00</div>
         </div>
-        <span class="badge">Tevhid &amp; Şirk &amp; Bid‘at</span>
+        <span class="badge">Tevhid · Şirk · Bid‘at</span>
       </div>
     </div>
 
@@ -410,7 +405,8 @@
           <button class="btn btn-primary" id="nextBtn" disabled>Sonraki Soru</button>
         </div>
         <div class="helper-text">
-          İpucu: Tevhid; Allah’ı rubûbiyetinde, ulûhiyetinde ve isim-sıfatlarında birlemek demektir.
+          İpucu: Tevhid; Allah’ı rubûbiyetinde, ulûhiyetinde ve isim-sıfatlarında birlemek,
+          ibadeti yalnız Ona yapmaktır.
         </div>
       </div>
     </div>
@@ -418,19 +414,18 @@
     <div class="overlay" id="overlay">
       <h2>Tevhid Yolculuğu Başlıyor</h2>
       <p>
-        Soruları dikkatle oku, seçeneklerden doğru olanı seç. Her doğru cevap sana ilim puanı
-        kazandıracak. Hedefin: Tevhid'i daha iyi öğrenmek ve şirke, bid‘ata karşı dikkatli olup sakınmak.
+        Soruları dikkatle oku, doğru seçeneği işaretle.
+        Her doğru cevap tevhid ilmini güçlendirsin, şirke ve bid‘ate karşı da seni uyarıcı olsun.
       </p>
       <div class="overlay-badges">
         <span class="overlay-badge">Tevhid-ul Ulûhiyye</span>
         <span class="overlay-badge">Tevhid-ul Rubûbiyye</span>
         <span class="overlay-badge">Tevhid-ul Esmâ ve’s-Sıfat</span>
         <span class="overlay-badge">Şirkten sakınma</span>
-        <span class="overlay-badge">Bid‘atten uzak durma</span>
       </div>
       <p class="overlay-note">
-        Bu quiz, klasik Ehl-i Sünnet ve selef ulemasının tevhid anlayışı üzere
-        hazırlanmıştır. Başarı ancak Allah'tandır!
+        Bu sadece bir alıştırma oyunudur. Gerçek ilim, Kur’an ve sahih sünneti selef ulemasının
+        anlayışıyla öğrenmekledir.
       </p>
       <button class="btn btn-primary" id="startBtn">Başla</button>
     </div>
@@ -439,16 +434,16 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const TOTAL_TIME_SECONDS = 25 * 60; // 25 dk üst limit (rahatça)
+    const TOTAL_TIME_SECONDS = 25 * 60;
 
     const questions = [
       {
         theme: "Tevhid Temel",
         question: "Tevhid ne demektir?",
         options: [
-          "Allah’ın varlığını inkar etmek",
+          "Kader'e iman etmek",
           "Allah’ın birliğini, O’na ibadeti yalnız Ona has kılmak",
-          "Meleklere tapmak",
+          "Melekler'i sevmek",
           "Sadece zor zamanlarda dua etmek"
         ],
         correctIndex: 1,
@@ -458,10 +453,10 @@
         theme: "Tevhid-ul Ulûhiyye",
         question: "Ulûhiyet tevhidi neyi özellikle vurgular?",
         options: [
-          "Sadece Allah’ın yarattığını",
-          "Sadece Allah’ın rızık verdiğini",
+          "Allah’ın yarattığını",
+          "Allah’ın rızık verdiğini",
           "Sadece Allah’ın ibadete layık olduğunu",
-          "Sadece meleklerin günahsız olduğunu"
+          "Melekler'in günahsız olduğunu"
         ],
         correctIndex: 2,
         explanation: "Tevhid-ul Ulûhiyye, ibadeti sadece Allah’a yapmayı, dua, secde, adak gibi amelleri Ona has kılmayı vurgular."
@@ -485,10 +480,10 @@
           "Allah’a",
           "Peygambere (sallallahu aleyhi ve sellem)",
           "Evliyaların ruhlarına",
-          "Ağaçlara ve türbelere"
+          "Ağaçlara, yıldızlara ve türbelere"
         ],
         correctIndex: 0,
-        explanation: "Dua ibadettir ve ibadet yalnız Allah’a yapılır. Yardım istenirken de kalpten tevekkül Allah’adır."
+        explanation: "Dua ibadettir ve ibadet yalnız Allah’a yapılır. Yardım istenirken de kalpten tevekkül yalnız Allah’adır."
       },
       {
         theme: "Şirk",
@@ -497,7 +492,7 @@
           "Sadece günah işlemek",
           "Allah’a kul olmak",
           "Allah’a ait bir ibadeti başkasına yöneltmek, Allah’a ortak koşmak",
-          "Sadaka vermek"
+          "Yalan söylemek"
         ],
         correctIndex: 2,
         explanation: "Şirk; Allah’a ait hakkı başkasıyla paylaşmak, ibadeti, duayı, adak ve kurbanı Allah’tan başkasına yöneltmektir."
@@ -506,22 +501,22 @@
         theme: "Şirk Türü",
         question: "Aşağıdakilerden hangisi büyük şirke örnek olabilir?",
         options: [
-          "Sadece Allah’tan af dilemek",
-          "Peygamberden (hayatta değilken) yardım dilemek",
-          "Namaz kılmak",
-          "Kur’an okumak"
+          "Yalan söylemek",
+          "Veli, melek veya peygamberleri yardıma çağırmak",
+          "Haset etmek",
+          "Kötü söz söylemek"
         ],
         correctIndex: 1,
-        explanation: "Her durumda yardıma yetişmek, yalnız Allah’a mahsustur. Ölmüş birinden yardım istemek, Allah’a ait bir sıfatı ona vermek olur."
+        explanation: "Her durumda yardım etmek Allah’a mahsustur. Ölmüş veya yanında olmayan birinden yardım istemek ise şirktir."
       },
       {
         theme: "İbadet",
         question: "Şu amellerden hangisi ibadettir?",
         options: [
           "Namaz, dua, kurban, adak",
-          "Sadece yemek yemek",
-          "Sadece oyun oynamak",
-          "Sadece uyumak"
+          "Yemek yemek, su içmek",
+          "Oyun oynamak, spor",
+          "Yazı yazmak, okumak"
         ],
         correctIndex: 0,
         explanation: "Namaz, dua, kurban, adak gibi ameller ibadettir ve yalnız Allah’a yapılmalıdır."
@@ -530,10 +525,10 @@
         theme: "Tevekkül",
         question: "Tevekkül ne demektir?",
         options: [
-          "Hiç çalışmamak",
+          "Çalışmamak",
           "Allah’a güvenip sebeplere sarılmak",
-          "Sadece insanlara güvenmek",
-          "Sadece kendine güvenmek"
+          "İnsanlara güvenmek",
+          "Kendine güvenmek"
         ],
         correctIndex: 1,
         explanation: "Tevekkül; sebeplere sarılırken kalben sadece Allah’a güvenmek, sonucu Ondan beklemektir."
@@ -544,32 +539,32 @@
         options: [
           "Dinde aslı olan güzel işler",
           "Peygamber ve sahabede olmayan, dine sonradan eklenen ibadet ve inanç şekilleri",
-          "Sadaka vermek",
-          "Kur’an okumak"
+          "Kötülük",
+          "İsyan"
         ],
         correctIndex: 1,
         explanation: "Bid‘at; Rasûlullah’ın ve sahabenin yapmadığı, dine sonradan sokulan ibadet ve inanç şekilleridir."
       },
       {
-        theme: "Sünnete Uymak",
+       theme: "Sünnete Uymak",
         question: "Bid‘atten uzak durup sünnete sarılmak neden önemlidir?",
         options: [
           "Çünkü insanlar öyle istiyor",
           "Çünkü dünya hayatını süsler",
           "Çünkü hidayet Rasûlullah’ın (sallallahu aleyhi ve sellem) yolundadır",
-          "Çünkü eğlenceli gelir"
+          "Çünkü şirktir"
         ],
         correctIndex: 2,
-        explanation: "Hidayet, Rasûlullah ve sahabenin yolundadır. Bid‘at ise vahyin ve hidayetin karşısındadır."
+        explanation: "Hidayet, Rasûlullah ve sahabenin yolundadır. Bid‘at ise hidayetin karşısındadır."
       },
       {
         theme: "Niyet",
-        question: "Bir amelin kabul olması için niyet kim için olmalıdır?",
+        question: "Bir amelin kabul olması için niyet ne için veya kim için olmalıdır?",
         options: [
           "İnsanları memnun etmek için",
           "Sadece Allah için, ihlâsla",
           "Aileyi memnun etmek için",
-          "Arkadaşlara gösteriş için"
+          "Arkadaşları sevindirmek için"
         ],
         correctIndex: 1,
         explanation: "Amel, Allah için, ihlâs ile yapılırsa makbuldür. Gösteriş için yapılan ibadet, riya olur."
@@ -584,7 +579,7 @@
           "Sadaka vermek"
         ],
         correctIndex: 1,
-        explanation: "Riya; ibadeti Allah için değil, insanların beğenmesi için yapmak, gizli şirktir."
+        explanation: "Riya; ibadeti ihlasla Allah için değil, insanların beğenmesi için yapmaktır ve gizli şirktir."
       },
       {
         theme: "Korku ve Ümit",
@@ -604,26 +599,26 @@
         options: [
           "Dünya malına",
           "Sporculara",
-          "Allah’a ve O’nun Rasûlü’ne",
-          "Sadece arkadaşlara"
+          "Allah’a, sonra O’nun Rasûlü’ne",
+          "Hoca'ya veya arkadaşlara"
         ],
         correctIndex: 2,
-        explanation: "Müminin en büyük sevgisi Allah’a ve Rasûlü’ne olur. Diğer sevgiler bu sevginin altında olmalıdır."
+        explanation: "Müminin en büyük sevgisi Allah’a, sonra Rasûlü’ne olur. Diğer sevgiler bu sevginin altında olmalıdır."
       },
       {
         theme: "Allah için Sevmek",
         question: "Allah için sevmek ne demektir?",
         options: [
-          "Sadece kendini sevmek",
-          "Allah’ın sevdiğini sevmek, Allah’ın sevmediğini sevmemek",
-          "Sadece akrabayı sevmek",
-          "Sadece eğlendiğini sevmek"
+          "Kendini sevmek",
+          "Allah’ın sevdiğini sevmek",
+          "Akrabayı sevmek",
+          "Hayvanları sevmek"
         ],
         correctIndex: 1,
         explanation: "Allah için sevmek; Allah’ın sevdiği iman, salih amel, müminleri sevmek; Allah’ın sevmediği küfür ve isyandan nefret etmektir."
       },
       {
-        theme: "Meleklerden Yardım İstemek",
+        theme: "Meleklerden Yardım",
         question: "Meleklerden bağımsız şekilde yardım istemek doğru mudur?",
         options: [
           "Evet, her zaman çağırabiliriz",
@@ -640,8 +635,8 @@
         options: [
           "Tevhid",
           "Şirk ve batıl inançlara",
-          "Sadece sünnete",
-          "Sadece edebe"
+          "Sünnet'e",
+          "Edep ve ahlaka"
         ],
         correctIndex: 1,
         explanation: "Kalbi nazarlık, muska, uğura bağlamak, sebepleri ilahlaştırmaya götürebilir ve şirke yakındır."
@@ -653,10 +648,10 @@
           "Kabirde yatan kişiden istekler dilemek",
           "Kabirden medet ummak",
           "Kabirde yatanı dua ile anmak, ibadeti sadece Allah’a yapmak",
-          "Kabri tavaf etmek"
+          "Kabri tavaf etmek, yüksek sesle ağlamak"
         ],
         correctIndex: 2,
-        explanation: "Kabir ziyareti ölümü hatırlamak ve ölü için Allah’a dua etmek içindir; ibadet yalnız Allah’a yapılır."
+        explanation: "Kabir ziyareti ölümü hatırlamak ve ölü için Allah’a dua etmek içindir; ona ibadet etmek için değil."
       },
       {
         theme: "Sihir ve Fal",
@@ -664,23 +659,23 @@
         options: [
           "Eğlencelidir",
           "Masum şeylerdir",
-          "İslam’da yasaktır ve şirk kapsamındadır",
+          "İslam’da yasaktır, büyük günah ve şirke götüren kapılardandır",
           "Her zaman serbesttir"
         ],
         correctIndex: 2,
-        explanation: "Sihir, büyü, fal haramdır, büyük günahlardandır ve insanı küfre ve şirke götürebilir."
+        explanation: "Sihir, büyü, fal haramdır, büyük günahlardandır ve insanı küfre ve şirke götürür."
       },
       {
         theme: "Kur’an’a Uymak",
         question: "Tevhidi öğrenmek için en büyük kaynak nedir?",
         options: [
-          "Sadece internet",
-          "Kur’an ve sahih sünnet",
-          "Sadece hikayeler",
-          "Sadece rüyalar"
+          "İnternet",
+          "Kur’an ve Sünnet",
+          "Hikayeler",
+          "Rüyalar"
         ],
         correctIndex: 1,
-        explanation: "Tevhid ilminin asıl kaynağı Kur’an ve sahih sünnettir. Selef uleması da bu iki kaynağa dayanır."
+        explanation: "Tevhid ilminin asıl kaynağı Kur’an ve Sünnet'tir. Selef uleması da bu iki kaynağa dayanır."
       },
       {
         theme: "Salih Amel",
@@ -688,56 +683,56 @@
         options: [
           "Hiç bağ yoktur",
           "Tevhid varsa amel önemli değildir",
-          "Tevhid kalpte, amel ise onun meyvesidir",
+          "Tevhid ilmi kalpte yerleşirse, amelde şirk bulunmaz",
           "Sadece amel önemlidir"
         ],
         correctIndex: 2,
-        explanation: "Tevhid kalpte kök saldığında, salih ameller onun meyvesi olur; ikisi birbirini tamamlar."
+        explanation: "Tevhid kalpte kök saldığında, salih ameller onun meyvesi olur; ikisi birbirini tamamlar ve amelde şirk bulunmaz."
       },
       {
         theme: "Küçük Şirk",
         question: "Aşağıdakilerden hangisi küçük şirke örnek olabilir?",
         options: [
-          "Namazı Allah için kılmak",
+          "Namazı hızlı kılmak",
           "İnsanlar görsün diye ibadet etmek (riya)",
-          "Yalnız Allah’a dua etmek",
-          "Sadece helal kazanmak"
+          "Kavga etmek",
+          "Haram kazanç"
         ],
         correctIndex: 1,
-        explanation: "Riya, insanların görmesi için ibadet etmek, küçük şirktir. Tehlikelidir ve Tevhid'i zedeler."
+        explanation: "Riya, insanların görmesi için ibadet etmek, küçük şirktir. Tehlikelidir ve kalbi bozar."
       },
       {
         theme: "Kalp İbadeti",
         question: "Hangisi kalp ibadetlerindendir?",
         options: [
-          "Yürümek",
-          "Koşmak",
+          "Teyemmüm",
+          "Tavaf",
           "Allah’ı sevmek, O’ndan korkmak, O’na güvenmek",
-          "Sadece yemek yemek"
+          "Kurban kesmek"
         ],
         correctIndex: 2,
-        explanation: "Sevgi, korku, ümit, tevekkül gibi kalp amelleri tevhidin çok önemli parçalarıdır."
+        explanation: "Sevgi, korku, ümit, tevekkül gibi kalp amelleri tevhidin çok önemli esaslarıdır."
       },
       {
         theme: "Şirkten Kaçınmak",
         question: "Şirkten korunmanın ilk adımlarından biri nedir?",
         options: [
-          "Şirki hafife almak",
+          "İlahi okumak",
           "Tevhidi öğrenmek ve şirk çeşitlerini tanımak",
-          "Hiç düşünmemek",
-          "Sadece dünyayı düşünmek"
+          "Ezgi dinlemek",
+          "Hoca'ya güvenmek"
         ],
         correctIndex: 1,
-        explanation: "Şirkten korunmak için tevhidi ve şirk yollarını tanımak gerekir; ilim, korumanın temelidir."
+        explanation: "Şirkten korunmak için tevhidi ve şirk yollarını tanımak gerekir; ilim, bu korumanın temelidir."
       },
       {
         theme: "Sahabenin Yolu",
         question: "Tevhid konusunda en güvenilir yol kimlerin yoludur?",
         options: [
-          "Filmlerin yolu",
-          "Sadece filozofların yolu",
+          "Sporcular'ın yolu",
+          "Filozoflar'ın yolu",
           "Peygamberimiz ve sahabenin (selefin) yolu",
-          "Sadece rüya görenlerin yolu"
+          "Rüya tabircilerinin yolu"
         ],
         correctIndex: 2,
         explanation: "Hak yol, Rasûlullah ve sahabe neslinin yoludur. Selef, tevhidde örneğimizdir."
@@ -746,10 +741,10 @@
         theme: "Dinde Kolaylık",
         question: "Tevhid yolunda yürürken hangi özellik önemlidir?",
         options: [
-          "İnatla hakikati reddetmek",
-          "Her şeyi oyun sanmak",
+          "İnatlaşmak",
+          "Belgesel izlemek",
           "İhlâs, ilim ve güzel ahlak",
-          "Sadece insanları taklit etmek"
+          "İnsanları taklit etmek"
         ],
         correctIndex: 2,
         explanation: "Tevhid hem kalpte hem amelde ihlas, ilim ve güzel ahlak ile yaşanır."
@@ -758,8 +753,8 @@
         theme: "Dost Seçimi",
         question: "Tevhidi korumak için arkadaş seçiminde neye dikkat etmeliyiz?",
         options: [
-          "Sadece eğlenceye bakmak",
-          "İbadetsiz, günaha çağıranları seçmek",
+          "Akrabalar'ı seçmek",
+          "Mahalledeki çocukları seçmek",
           "Namaza, Kur’an’a önem veren, tevhidi seven kimselerle arkadaş olmak",
           "Hiç arkadaş edinmemek"
         ],
@@ -770,9 +765,9 @@
         theme: "Dünya Sevgisi",
         question: "Aşırı dünya sevgisi kalbi neye götürebilir?",
         options: [
-          "Tevhide güç verir",
+          "Tevhid'e",
           "Şirk, gaflet ve günaha sürükleyebilir",
-          "Hep iyileştirir",
+          "Güzel ahlaka",
           "Hiç etkisi olmaz"
         ],
         correctIndex: 1,
@@ -782,9 +777,9 @@
         theme: "Tevhid Sözü",
         question: "La ilahe illallah neyi ifade eder?",
         options: [
-          "Hiçbir manası yoktur",
+          "Zekatı eksiksiz vermek",
           "Allah’tan başka ilah yoktur, ibadet yalnız Onadır",
-          "Sadece selamlaşma cümlesidir",
+          "Ramazan'da ihlasla oruç tutmak",
           "Sadece zor zamanda söylenir"
         ],
         correctIndex: 1,
@@ -794,10 +789,10 @@
         theme: "Son Soru",
         question: "Tevhid üzere yaşamak neyi gerektirir?",
         options: [
-          "Sadece dil ile kelimeyi söylemek, amel yok",
+          "Sadece dil ile kelimeyi söylemek, amelsiz de olur",
           "Kalp, dil ve uzuvlarla Allah’a kulluk etmek",
           "Sadece kalpten inanmak",
-          "Sadece tatilde ibadet etmek"
+          "Sadece Cuma namazını kılmak"
         ],
         correctIndex: 1,
         explanation: "Tevhid; kalple iman, dille ikrar ve uzuvlarla ibadet ederek Allah’a kulluk etmektir."
@@ -919,7 +914,7 @@
       const percentage = Math.round((score / maxScore) * 100);
 
       let title = "Güzel Bir Başlangıç!";
-      if (percentage >= 90) title = "MaşaAllah, Tevhid Yolcusu!";
+      if (percentage >= 90) title = "Maşallah, Tevhid Yolcusu!";
       else if (percentage >= 70) title = "İyi Gidiyorsun!";
       else if (percentage >= 50) title = "Daha Çok Çalışarak Güçlen!";
 
@@ -928,18 +923,19 @@
         <p>
           ${totalQuestions} sorudan toplam
           <span class="score-big">${score} puan</span> topladın.
-          Allah sana bu Tevhid ilminle, şirk ve bid‘atten uzak durmana yardım etsin.
+          Allah sana tevhid ilminle, şirk ve bid‘atten uzak durmana yardım etsin. (Amin!)
         </p>
         <div class="overlay-badges">
           <span class="overlay-badge">Doğru: ${score / 10} / ${totalQuestions}</span>
           <span class="overlay-badge">Yüzde: ${percentage}%</span>
         </div>
         <p class="overlay-note">
-          İlimle tevhidi öğrenmek, amel ile yaşamak gerekir. Bu quiz sadece bir alıştırmadır.
-          Kur’an ve sahih sünnetten öğrenmeye Tevhid'i öğrenmeye devam et.
+          İlimle tevhidi öğrenmek ve onu amel ile yaşamak gerekir.
+          Bu quiz sadece bir alıştırmadır. Tevhid'i, Kur’an, Sünnet ve selefin eserlerinden öğrenmeye devam et.
         </p>
         <button class="btn btn-primary" id="againBtn">Tekrar Oyna</button>
       `;
+
       const againBtn = document.getElementById('againBtn');
       againBtn.addEventListener('click', () => {
         resetGame();
