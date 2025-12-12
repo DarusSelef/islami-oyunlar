@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Süper Muslim</title>
+  <style>
+    :root{
+      --bg0:#071218;
+      --bg1:#0b1f2a;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.10);
+      --stroke: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --good: #41d18a;
+      --warn: #f4b942;
+      --bad:  #ff5a6a;
+      --accent:#4cc9f0;
+      --accent2:#b5179e;
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; background: radial-gradient(1100px 700px at 30% 20%, #0d2a36 0%, var(--bg0) 55%, #050c10 100%); color:var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; overflow:hidden; }
+    body{ -webkit-tap-highlight-color: transparent; }
+
+    .wrap{
+      position: fixed;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+      padding: 14px 14px 12px 14px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      padding-top: calc(14px + env(safe-area-inset-top));
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      min-width: 240px;
+    }
+    .logo{
+      width: 34px; height: 34px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 30% 30%, var(--accent) 0%, rgba(76,201,240,.25) 60%, rgba(181,23,158,.15) 100%);
+      border: 1px solid rgba(255,255,255,.18);
+      display:grid; place-items:center;
+      position: relative;
+      overflow:hidden;
+    }
+    .logo:before{
+      content:"";
+      position:absolute; inset:-30%;
+      background: conic-gradient(from 180deg, rgba(255,255,255,.0), rgba(255,255,255,.18), rgba(255,255,255,.0));
+      animation: spin 5s linear infinite;
+    }
+    .logo span{
+      position:relative;
+      font-weight: 800;
+      letter-spacing:.5px;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 6px 18px rgba(0,0,0,.35);
+      font-size: 14px;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    .title{
+      display:flex; flex-direction:column; gap:2px;
+      line-height:1.1;
+    }
+    .title b{ font-size: 14px; letter-spacing:.3px; }
+    .title small{ color: var(--muted); font-size: 12px; }
+
+    .hud{
+      display:flex;
+      align-items:stretch;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      min-width: 120px;
+    }
+    .pill span{ color: var(--muted); font-size: 12px; }
+    .pill b{ font-size: 16px; letter-spacing: .3px; }
+
+    .btnRow{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    button{
+      appearance:none;
+      border:none;
+      color: var(--text);
+      padding: 11px 13px;
+      border-radius: 16px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      background: linear-gradient(180deg, rgba(76,201,240,.22), rgba(181,23,158,.16));
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: var(--shadow);
+      cursor:pointer;
+      transition: transform .12s ease, filter .12s ease, background .2s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    button:hover{ filter: brightness(1.05); transform: translateY(-1px); }
+    button:active{ transform: translateY(1px) scale(.99); }
+    button.secondary{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+    }
+    button.danger{
+      background: linear-gradient(180deg, rgba(255,90,106,.22), rgba(255,90,106,.12));
+    }
+
+    .gameCard{
+      position:relative;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--stroke);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      min-height: 300px;
+      backdrop-filter: blur(10px);
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:100%;
+    }
+
+    /* Overlay screens */
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      background: radial-gradient(900px 600px at 30% 20%, rgba(76,201,240,.10), rgba(0,0,0,.55) 60%, rgba(0,0,0,.70) 100%);
+      backdrop-filter: blur(8px);
+    }
+    .panel{
+      width:min(560px, 100%);
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      padding: 18px 18px 16px 18px;
+    }
+    .panel h1{
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      letter-spacing:.2px;
+    }
+    .panel p{
+      margin: 0 0 14px 0;
+      color: var(--muted);
+      line-height:1.45;
+      font-size: 13px;
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0 14px;
+    }
+    .miniCard{
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .miniCard span{ display:block; color: var(--muted); font-size: 12px; }
+    .miniCard b{ display:block; margin-top: 2px; font-size: 18px; }
+
+    .kbd{
+      display:flex; flex-wrap:wrap; gap: 8px;
+      margin: 10px 0 0;
+    }
+    .key{
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.88);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .touchBar{
+      position:absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      pointer-events:none;
+    }
+    .pad{
+      pointer-events:auto;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:center;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+    .pad button{
+      box-shadow:none;
+      border-radius: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      min-width: 54px;
+    }
+    .pad button:active{ transform: scale(.98); }
+
+    .hint{
+      position:absolute;
+      top: 12px;
+      left: 12px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.82);
+      font-size: 12px;
+      backdrop-filter: blur(8px);
+      user-select:none;
+      pointer-events:none;
+    }
+
+    @media (max-width: 720px){
+      .brand{ min-width: unset; flex: 1; }
+      header{ gap: 8px; }
+      .pill{ min-width: 106px; }
+      .grid2{ grid-template-columns: 1fr; }
+      .touchBar{ bottom: calc(12px + env(safe-area-inset-bottom)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"><span>SM</span></div>
+        <div class="title">
+          <b>Süper Muslim</b>
+          <small>Koş • Zıpla • Puan Topla - Daru-s Selef</small>
+        </div>
+      </div>
+
+      <div class="hud">
+        <div class="pill">
+          <span>Skor</span>
+          <b id="hudScore">0</b>
+        </div>
+        <div class="pill">
+          <span>Vakit</span>
+          <b id="hudTime">60.0</b>
+        </div>
+        <div class="pill">
+          <span>Güç</span>
+          <b id="hudLives">3</b>
+        </div>
+        <div class="btnRow">
+          <button class="secondary" id="btnPause">Duraklat</button>
+          <button class="secondary" id="btnMute">Ses: Kapalı</button>
+          <button class="danger" id="btnRestartTop">Yeniden</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="gameCard" id="gameCard">
+      <div class="hint" id="hint">Mobil: Sol/Sağ + Zıpla • PC: ← → / A D ve Space</div>
+      <canvas id="c"></canvas>
+
+      <div class="touchBar" aria-hidden="false">
+        <div class="pad">
+          <button id="touchLeft" title="Sol">◀</button>
+          <button id="touchRight" title="Sağ">▶</button>
+        </div>
+        <div class="pad">
+          <button id="touchJump" title="Zıpla">⤒</button>
+        </div>
+      </div>
+
+      <!-- Start overlay -->
+      <div class="overlay" id="startOverlay">
+        <div class="panel">
+          <h1>Süper Muslim</h1>
+          <p>
+            Amaç: Puan topla, çukurlardan düşme, engelleri aş. Düşmanların <b>üstüne</b> zıplarsan etkisiz hâle gelir.
+            Vakit dolmadan en yüksek skoru yap.
+          </p>
+          <div class="grid2">
+            <div class="miniCard">
+              <span>İpucu</span>
+              <b>Üste zıpla</b>
+              <span>Düşmanın başına basınca puan kazanırsın.</span>
+            </div>
+            <div class="miniCard">
+              <span>Kontrol</span>
+              <b>Kolay</b>
+              <span>Mobil butonları veya klavyeyi kullan.</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <button class="secondary" id="btnHow">Nasıl Oynanır</button>
+            <button id="btnStart">Başla</button>
+          </div>
+          <div class="kbd" id="howBox" style="display:none;">
+            <span class="key">PC: ← → / A D</span>
+            <span class="key">Zıpla: Space / ↑ / W</span>
+            <span class="key">Duraklat: P</span>
+            <span class="key">Yeniden: R</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- End overlay -->
+      <div class="overlay" id="endOverlay" style="display:none;">
+        <div class="panel">
+          <h1 id="endTitle">Oyun Bitti</h1>
+          <p id="endMsg">Sonuçların aşağıda.</p>
+          <div class="grid2">
+            <div class="miniCard">
+              <span>Skor</span>
+              <b id="endScore">0</b>
+              <span id="endDetail1">Toplanan puanlar.</span>
+            </div>
+            <div class="miniCard">
+              <span>Süre</span>
+              <b id="endTime">0.0</b>
+              <span id="endDetail2">Geçen vakit.</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <button class="secondary" id="btnShare">Skoru Kopyala</button>
+            <button class="secondary" id="btnHome">Ana Ekran</button>
+            <button id="btnRestart">Tekrar Başla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // -----------------------------
+  // Utilities
+  // -----------------------------
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // -----------------------------
+  // Audio (simple beep synth)
+  // -----------------------------
+  let audioCtx = null;
+  let muted = true;
+  function beep(freq=440, dur=0.06, type="sine", gain=0.04){
+    if (muted) return;
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const t0 = audioCtx.currentTime;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, t0);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t0);
+      o.stop(t0 + dur + 0.02);
+    }catch(e){}
+  }
+
+  // -----------------------------
+  // DOM
+  // -----------------------------
+  const canvas = document.getElementById("c");
+  const card = document.getElementById("gameCard");
+  const ctx = canvas.getContext("2d");
+
+  const hudScore = document.getElementById("hudScore");
+  const hudTime  = document.getElementById("hudTime");
+  const hudLives = document.getElementById("hudLives");
+
+  const startOverlay = document.getElementById("startOverlay");
+  const endOverlay = document.getElementById("endOverlay");
+  const endTitle = document.getElementById("endTitle");
+  const endMsg = document.getElementById("endMsg");
+  const endScore = document.getElementById("endScore");
+  const endTime = document.getElementById("endTime");
+
+  const btnStart = document.getElementById("btnStart");
+  const btnRestart = document.getElementById("btnRestart");
+  const btnRestartTop = document.getElementById("btnRestartTop");
+  const btnHome = document.getElementById("btnHome");
+  const btnPause = document.getElementById("btnPause");
+  const btnMute = document.getElementById("btnMute");
+  const btnShare = document.getElementById("btnShare");
+  const btnHow = document.getElementById("btnHow");
+  const howBox = document.getElementById("howBox");
+
+  const touchLeft = document.getElementById("touchLeft");
+  const touchRight = document.getElementById("touchRight");
+  const touchJump = document.getElementById("touchJump");
+
+  // -----------------------------
+  // Responsive canvas
+  // -----------------------------
+  function resize(){
+    const r = card.getBoundingClientRect();
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width  = Math.floor(r.width  * dpr);
+    canvas.height = Math.floor(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener("resize", resize, {passive:true});
+  resize();
+
+  // -----------------------------
+  // Input
+  // -----------------------------
+  const keys = { left:false, right:false, up:false };
+  window.addEventListener("keydown", (e) => {
+    const k = e.key.toLowerCase();
+    if(["arrowleft","a"].includes(k)) keys.left = true;
+    if(["arrowright","d"].includes(k)) keys.right = true;
+    if(["arrowup","w"," "].includes(k)) keys.up = true;
+
+    if(k === "p") togglePause();
+    if(k === "r") restart();
+  });
+  window.addEventListener("keyup", (e) => {
+    const k = e.key.toLowerCase();
+    if(["arrowleft","a"].includes(k)) keys.left = false;
+    if(["arrowright","d"].includes(k)) keys.right = false;
+    if(["arrowup","w"," "].includes(k)) keys.up = false;
+  });
+
+  function bindHold(btn, onDown, onUp){
+    const down = (e)=>{ e.preventDefault(); onDown(); };
+    const up   = (e)=>{ e.preventDefault(); onUp(); };
+    btn.addEventListener("pointerdown", down);
+    btn.addEventListener("pointerup", up);
+    btn.addEventListener("pointercancel", up);
+    btn.addEventListener("pointerleave", up);
+  }
+  bindHold(touchLeft, ()=> keys.left = true, ()=> keys.left = false);
+  bindHold(touchRight, ()=> keys.right = true, ()=> keys.right = false);
+  bindHold(touchJump, ()=> { keys.up = true; setTimeout(()=> keys.up=false, 80); }, ()=> {});
+
+  // -----------------------------
+  // Game world settings
+  // -----------------------------
+  const GAME = {
+    running: false,
+    paused: false,
+    over: false,
+    timeLimit: 60.0,
+    timeLeft: 60.0,
+    elapsed: 0.0,
+    score: 0,
+    lives: 3,
+    combo: 0,
+    speed: 240,         // base scroll speed
+    gravity: 1800,
+    jumpVel: 720,
+    groundY: 0,
+    cameraX: 0,
+    worldX: 0,
+    difficulty: 1,
+  };
+
+  // Entities
+  const player = {
+    x: 120, y: 0,
+    w: 34, h: 44,
+    vx: 0, vy: 0,
+    onGround: false,
+    invuln: 0,
+    facing: 1,
+  };
+
+  // Platforms + pits are generated as segments along x
+  // A segment: {x, w, type:"ground"|"pit"|"platform", y, h}
+  const segments = [];
+  const enemies = [];
+  const coins = [];
+  const particles = [];
+
+  // Visual theme palette (canvas)
+  function drawBackground(w, h, t){
+    // sky gradient
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, "rgba(15, 50, 70, 0.95)");
+    g.addColorStop(0.55, "rgba(7, 18, 24, 0.92)");
+    g.addColorStop(1, "rgba(5, 10, 14, 1)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // stars / soft dots
+    ctx.globalAlpha = 0.18;
+    for(let i=0;i<80;i++){
+      const px = (i*173 + (t*18)) % (w+200) - 100;
+      const py = (i*97) % (h*0.55);
+      const r = 1 + (i%3)*0.6;
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // far hills
+    const base = h*0.78;
+    ctx.fillStyle = "rgba(76,201,240,0.07)";
+    ctx.beginPath();
+    ctx.moveTo(0, base);
+    for(let x=0;x<=w;x+=80){
+      const y = base - 30 - Math.sin((x+t*40)/180)*22 - (x%160)*0.08;
+      ctx.quadraticCurveTo(x+40, y, x+80, base);
+    }
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // subtle vignette
+    const vg = ctx.createRadialGradient(w*0.3, h*0.2, 50, w*0.5, h*0.5, Math.max(w,h));
+    vg.addColorStop(0, "rgba(0,0,0,0)");
+    vg.addColorStop(1, "rgba(0,0,0,0.35)");
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  // -----------------------------
+  // Generation
+  // -----------------------------
+  function resetWorld(){
+    GAME.timeLeft = GAME.timeLimit;
+    GAME.elapsed = 0;
+    GAME.score = 0;
+    GAME.lives = 3;
+    GAME.combo = 0;
+    GAME.cameraX = 0;
+    GAME.worldX = 0;
+    GAME.difficulty = 1;
+    GAME.over = false;
+
+    player.x = 120;
+    player.y = 0;
+    player.vx = 0;
+    player.vy = 0;
+    player.onGround = false;
+    player.invuln = 0;
+    player.facing = 1;
+
+    segments.length = 0;
+    enemies.length = 0;
+    coins.length = 0;
+    particles.length = 0;
+
+    // initial ground segments
+    const h = card.getBoundingClientRect().height;
+    GAME.groundY = Math.max(200, h - 130);
+    addSegment(0, 800, "ground", GAME.groundY, 80);
+    addSegment(820, 600, "ground", GAME.groundY, 80);
+    addSegment(1280, 50, "pit", GAME.groundY, 60);
+    addSegment(1540, 600, "ground", GAME.groundY, 80);
+
+    // a small platform
+    addSegment(980, 180, "platform", GAME.groundY - 120, 16);
+
+    // spawn a few enemies/coins
+    spawnCoinLine(240, GAME.groundY - 70, 4, 44);
+    spawnEnemy(620, GAME.groundY - 44, 60, 180);
+    spawnEnemy(1700, GAME.groundY - 44, 120, 240);
+  }
+
+  function addSegment(x, w, type, y, h){
+    segments.push({x, w, type, y, h});
+  }
+
+  function spawnEnemy(x, y, patrolA=60, patrolB=180){
+    enemies.push({
+      x, y,
+      w: 34, h: 34,
+      vx: 80,
+      alive: true,
+      stomped: false,
+      patrolMin: x - patrolA,
+      patrolMax: x + patrolB,
+      t: rand(0, 10)
+    });
+  }
+
+  function spawnCoinLine(x, y, count=5, gap=46){
+    for(let i=0;i<count;i++){
+      coins.push({
+        x: x + i*gap,
+        y,
+        r: 10,
+        taken: false,
+        bob: rand(0, Math.PI*2)
+      });
+    }
+  }
+
+  function emitParticles(x, y, n=10, color="rgba(76,201,240,0.9)"){
+    for(let i=0;i<n;i++){
+      particles.push({
+        x, y,
+        vx: rand(-120, 120),
+        vy: rand(-240, -60),
+        life: rand(0.35, 0.75),
+        t: 0,
+        color
+      });
+    }
+  }
+
+  // Procedural extension
+  let nextGenX = 2100;
+  function ensureWorldAhead(){
+    const viewW = card.getBoundingClientRect().width;
+    const ahead = GAME.cameraX + viewW + 800;
+
+    while(nextGenX < ahead){
+      // pattern: ground -> maybe pit -> ground -> platform -> enemy/coins
+      const groundLen = rand(380, 760);
+      addSegment(nextGenX, groundLen, "ground", GAME.groundY, 80);
+
+      // coins on ground
+      if(Math.random() < 0.65){
+        const cCount = Math.floor(rand(3, 7));
+        spawnCoinLine(nextGenX + rand(60, 140), GAME.groundY - rand(70, 110), cCount, 44);
+      }
+
+      // platform
+      if(Math.random() < 0.55){
+        addSegment(nextGenX + rand(160, groundLen-220), rand(140, 240), "platform", GAME.groundY - rand(110, 170), 16);
+      }
+
+      // enemy
+      if(Math.random() < 0.7){
+        spawnEnemy(
+          nextGenX + rand(120, groundLen-80),
+          GAME.groundY - 44,
+          rand(40, 120),
+          rand(120, 260)
+        );
+      }
+
+      nextGenX += groundLen + rand(40, 90);
+
+      // pit sometimes
+      if(Math.random() < 0.55){
+        // Zorluk artsa da çukurlar kontrollü büyür
+const maxPit = 70 + (GAME.difficulty - 1) * 18;   // en fazla ~70
+const pitW = rand(20, Math.min(80, maxPit));
+        addSegment(nextGenX, pitW, "pit", GAME.groundY, 80);
+        nextGenX += pitW + rand(20, 80);
+      }
+
+      // difficulty gently ramps
+      GAME.difficulty = clamp(GAME.difficulty + 0.03, 1, 3.0);
+    }
+  }
+
+  // -----------------------------
+  // Collision helpers
+  // -----------------------------
+  function rectsOverlap(a, b){
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+
+  function getSolidRectsInView(){
+    // Convert segments to solid rectangles (ground/platform only)
+    const solids = [];
+    for(const s of segments){
+      if(s.type === "ground" || s.type === "platform"){
+        solids.push({x:s.x, y:s.y, w:s.w, h:s.h, type:s.type});
+      }
+    }
+    return solids;
+  }
+
+  function isOverPit(px){
+  const leftFoot  = px + 4;
+  const rightFoot = px + player.w - 4;
+
+  for(const s of segments){
+    if(s.type !== "pit") continue;
+
+    const leftOver  = leftFoot  >= s.x && leftFoot  <= s.x + s.w;
+    const rightOver = rightFoot >= s.x && rightFoot <= s.x + s.w;
+
+    // İKİ AYAK da çukurdaysa düş
+    if(leftOver && rightOver) return true;
+  }
+  return false;
+}
+
+  // -----------------------------
+  // Game flow
+  // -----------------------------
+  function start(){
+    startOverlay.style.display = "none";
+    endOverlay.style.display = "none";
+    GAME.running = true;
+    GAME.paused = false;
+    btnPause.textContent = "Duraklat";
+    restart(true);
+  }
+
+  function restart(keepStartOverlay=false){
+    resetWorld();
+    nextGenX = 2100;
+    updateHUD();
+    if(!keepStartOverlay){
+      startOverlay.style.display = "none";
+      endOverlay.style.display = "none";
+    }
+    GAME.running = true;
+    GAME.over = false;
+    GAME.paused = false;
+    btnPause.textContent = "Duraklat";
+    beep(520, 0.06, "triangle", 0.03);
+  }
+
+  function gameOver(reason="Vakit doldu"){
+    GAME.over = true;
+    GAME.running = false;
+    endTitle.textContent = "Oyun Bitti";
+    endMsg.textContent = reason;
+    endScore.textContent = String(Math.floor(GAME.score));
+    endTime.textContent = (GAME.elapsed).toFixed(1) + " sn";
+    endOverlay.style.display = "flex";
+    beep(220, 0.12, "sawtooth", 0.05);
+    beep(180, 0.14, "sawtooth", 0.04);
+  }
+
+  function togglePause(){
+    if(!GAME.running || GAME.over) return;
+    GAME.paused = !GAME.paused;
+    btnPause.textContent = GAME.paused ? "Devam" : "Duraklat";
+  }
+
+  function updateHUD(){
+    hudScore.textContent = String(Math.floor(GAME.score));
+    hudTime.textContent = GAME.timeLeft.toFixed(1);
+    hudLives.textContent = String(GAME.lives);
+  }
+
+  // Buttons
+  btnStart.addEventListener("click", () => start());
+  btnRestart.addEventListener("click", () => restart());
+  btnRestartTop.addEventListener("click", () => restart());
+  btnHome.addEventListener("click", () => { endOverlay.style.display="none"; startOverlay.style.display="flex"; GAME.running=false; });
+  btnPause.addEventListener("click", () => togglePause());
+  btnMute.addEventListener("click", async () => {
+    muted = !muted;
+    btnMute.textContent = muted ? "Ses: Kapalı" : "Ses: Açık";
+    if(!muted){
+      try{
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        await audioCtx.resume();
+      }catch(e){}
+      beep(660, 0.06, "sine", 0.04);
+    }
+  });
+  btnShare.addEventListener("click", async () => {
+    const txt = `Süper Muslim skorum: ${Math.floor(GAME.score)} (Süre: ${GAME.elapsed.toFixed(1)} sn)`;
+    try{
+      await navigator.clipboard.writeText(txt);
+      endMsg.textContent = "Skor panoya kopyalandı.";
+      beep(740, 0.05, "triangle", 0.03);
+    }catch(e){
+      endMsg.textContent = "Kopyalama desteklenmedi (tarayıcı izni gerekebilir).";
+      beep(260, 0.08, "sine", 0.03);
+    }
+  });
+  btnHow.addEventListener("click", () => {
+    howBox.style.display = (howBox.style.display === "none") ? "flex" : "none";
+  });
+
+  // Prevent accidental page scroll on space in some browsers
+  window.addEventListener("keydown", (e) => { if(e.key === " ") e.preventDefault(); }, {passive:false});
+
+  // -----------------------------
+  // Physics + update loop
+  // -----------------------------
+  let last = performance.now();
+  function loop(now){
+    const dt = Math.min(0.033, (now - last) / 1000);
+    last = now;
+
+    const w = card.getBoundingClientRect().width;
+    const h = card.getBoundingClientRect().height;
+
+    // Keep ground synced with resize
+    const targetGround = Math.max(200, h - 130);
+    GAME.groundY = lerp(GAME.groundY, targetGround, 0.12);
+
+    if(GAME.running && !GAME.paused && !GAME.over){
+      update(dt, w, h);
+      updateHUD();
+    }
+
+    render(w, h, now/1000);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  function update(dt, viewW, viewH){
+    // time
+    GAME.elapsed += dt;
+    GAME.timeLeft -= dt;
+    if(GAME.timeLeft <= 0){
+      GAME.timeLeft = 0;
+      gameOver("Vakit doldu. Tekrar dene!");
+      return;
+    }
+
+    // auto forward scroll speed ramps with difficulty
+    const targetSpeed = GAME.speed * (1 + (GAME.difficulty-1)*0.22);
+    GAME.worldX += targetSpeed * dt;
+    GAME.cameraX = GAME.worldX;
+
+    // player movement relative to world
+    const accel = 2100;
+    const maxVx = 360;
+    const friction = player.onGround ? 0.82 : 0.93;
+
+    let ax = 0;
+    if(keys.left) ax -= accel;
+    if(keys.right) ax += accel;
+    if(ax !== 0) player.facing = ax > 0 ? 1 : -1;
+
+    player.vx += ax * dt;
+    player.vx = clamp(player.vx, -maxVx, maxVx);
+    player.vx *= friction;
+
+    // jump
+    if(keys.up && player.onGround){
+      player.vy = -GAME.jumpVel;
+      player.onGround = false;
+      GAME.combo = 0;
+      beep(560, 0.06, "triangle", 0.04);
+    }
+
+    // gravity
+    player.vy += GAME.gravity * dt;
+
+    // move player in world coordinates
+    player.x += player.vx * dt;
+    player.y += player.vy * dt;
+
+    // prevent player from falling behind the camera too much
+    const leftLimit = GAME.cameraX + 60;
+    if(player.x < leftLimit) player.x = leftLimit;
+
+    // collisions with ground/platform
+    const solids = getSolidRectsInView();
+
+    // Basic collision resolution (vertical)
+    player.onGround = false;
+    for(const s of solids){
+      // only check near range
+      if(s.x > player.x + 1200 || s.x + s.w < player.x - 200) continue;
+
+      // AABB
+      const px = player.x, py = player.y, pw = player.w, ph = player.h;
+      const overlapX = (px < s.x + s.w) && (px + pw > s.x);
+      const overlapY = (py < s.y + s.h) && (py + ph > s.y);
+      if(!overlapX || !overlapY) continue;
+
+      // Resolve: if falling and feet hit top of platform/ground
+      const prevY = py - player.vy * dt;
+      const wasAbove = (prevY + ph) <= s.y + 6;
+      if(player.vy >= 0 && wasAbove){
+        player.y = s.y - ph;
+        player.vy = 0;
+        player.onGround = true;
+      }else{
+        // Side bump
+        const prevX = px - player.vx * dt;
+        if(prevX + pw <= s.x + 6){
+          player.x = s.x - pw;
+          player.vx = 0;
+        }else if(prevX >= s.x + s.w - 6){
+          player.x = s.x + s.w;
+          player.vx = 0;
+        }else{
+          // If stuck inside, push up slightly
+          player.y -= 2;
+        }
+      }
+    }
+
+    // pits: if over pit and below ground line -> fall
+    if(!player.onGround && player.y > GAME.groundY + 260){
+      loseLife("Çukura düştün!");
+      return;
+    }
+
+    // clamp player to top boundary
+    if(player.y < -200) player.y = -200;
+
+    // enemies update
+    for(const e of enemies){
+      if(!e.alive) continue;
+      e.t += dt;
+      // patrol + slight speed ramp
+      const sp = (90 + (GAME.difficulty-1)*20);
+      e.x += e.vx * dt * (sp/90);
+      if(e.x < e.patrolMin){ e.x = e.patrolMin; e.vx = Math.abs(e.vx); }
+      if(e.x > e.patrolMax){ e.x = e.patrolMax; e.vx = -Math.abs(e.vx); }
+      // keep them on ground
+      e.y = GAME.groundY - e.h;
+
+      // collisions player <-> enemy
+      if(player.invuln > 0) continue;
+
+      const a = {x:player.x, y:player.y, w:player.w, h:player.h};
+      const b = {x:e.x, y:e.y, w:e.w, h:e.h};
+      if(rectsOverlap(a,b)){
+        // stomp if player's feet are above enemy head and falling
+        const playerFeet = player.y + player.h;
+        const enemyHead = e.y + 10;
+        if(player.vy > 0 && playerFeet - player.vy*dt <= enemyHead){
+          // stomp!
+          e.alive = false;
+          e.stomped = true;
+          player.vy = -GAME.jumpVel * 0.58;
+          const bonus = 120 + GAME.combo * 30;
+          GAME.score += bonus;
+          GAME.combo++;
+          emitParticles(e.x + e.w/2, e.y + e.h/2, 16, "rgba(65,209,138,0.95)");
+          beep(720, 0.05, "square", 0.035);
+          beep(980, 0.04, "square", 0.03);
+        }else{
+          // hit from side
+          loseLife("Düşmana çarptın!");
+          return;
+        }
+      }
+    }
+
+    // coins
+    for(const c of coins){
+      if(c.taken) continue;
+      c.bob += dt*4;
+      const cx = c.x, cy = c.y + Math.sin(c.bob)*6;
+      const a = {x:player.x, y:player.y, w:player.w, h:player.h};
+      const b = {x:cx - c.r, y:cy - c.r, w:c.r*2, h:c.r*2};
+      if(rectsOverlap(a,b)){
+        c.taken = true;
+        GAME.score += 35;
+        emitParticles(cx, cy, 10, "rgba(244,185,66,0.95)");
+        beep(880, 0.04, "triangle", 0.03);
+      }
+    }
+
+    // particles
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.t += dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 1200 * dt;
+      if(p.t >= p.life) particles.splice(i,1);
+    }
+
+    // keep player above ground if on ground and not over pit
+    if(player.onGround && isOverPit(player.x)){
+      // if ground underfoot is pit, force falling
+      player.onGround = false;
+    }
+
+    // generate ahead
+    ensureWorldAhead();
+
+    // score from distance
+    GAME.score += dt * 10 * (1 + (GAME.difficulty-1)*0.2);
+
+    // invulnerability countdown
+    player.invuln = Math.max(0, player.invuln - dt);
+  }
+
+  function loseLife(msg){
+    GAME.lives--;
+    player.invuln = 1.1;
+    GAME.combo = 0;
+    emitParticles(player.x + player.w/2, player.y + player.h/2, 18, "rgba(255,90,106,0.95)");
+    beep(190, 0.10, "sawtooth", 0.05);
+
+    if(GAME.lives <= 0){
+      gameOver(msg + " Canın bitti.");
+      return;
+    }
+
+    // respawn safely just behind camera
+    player.x = GAME.cameraX + 120;
+    player.y = GAME.groundY - player.h - 2;
+    player.vx = 0;
+    player.vy = 0;
+    player.onGround = true;
+
+    // small score penalty, but never negative
+    GAME.score = Math.max(0, GAME.score - 120);
+    endMsg.textContent = msg;
+  }
+
+  // -----------------------------
+  // Rendering
+  // -----------------------------
+  function render(viewW, viewH, t){
+    // clear + background
+    drawBackground(viewW, viewH, t);
+
+    // camera
+    const camX = GAME.cameraX;
+    ctx.save();
+    ctx.translate(-camX + 80, 0);
+
+    // draw segments
+    drawSegments(viewW, viewH);
+
+    // coins
+    for(const c of coins){
+      if(c.taken) continue;
+      const cy = c.y + Math.sin(c.bob)*6;
+      drawCoin(c.x, cy, c.r);
+    }
+
+    // enemies
+    for(const e of enemies){
+      if(!e.alive && e.stomped) continue;
+      drawEnemy(e);
+    }
+
+    // player
+    drawPlayer(player);
+
+    // particles
+    for(const p of particles){
+      const a = 1 - (p.t / p.life);
+      ctx.globalAlpha = a;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3 + 2*a, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.restore();
+
+    // foreground UI line
+    drawForegroundHUD(viewW, viewH);
+
+    // pause text
+    if(GAME.paused && GAME.running && !GAME.over){
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,0.35)";
+      ctx.fillRect(0,0,viewW,viewH);
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.font = "800 28px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Duraklatıldı", viewW/2, viewH/2 - 8);
+      ctx.font = "600 14px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = "rgba(255,255,255,0.72)";
+      ctx.fillText("Devam etmek için 'Devam' veya P", viewW/2, viewH/2 + 18);
+      ctx.restore();
+    }
+  }
+
+  function drawSegments(viewW, viewH){
+    // floor base line
+    const gy = GAME.groundY;
+    // ground strip
+    for(const s of segments){
+      if(s.x + s.w < GAME.cameraX - 200) continue;
+      if(s.x > GAME.cameraX + viewW + 600) continue;
+
+      if(s.type === "pit"){
+        // dark hole
+        const x = s.x, w = s.w;
+        ctx.save();
+        ctx.fillStyle = "rgba(0,0,0,0.55)";
+        ctx.fillRect(x, gy, w, 220);
+        // glow edges
+        const grad = ctx.createLinearGradient(x, 0, x+w, 0);
+        grad.addColorStop(0, "rgba(76,201,240,0.12)");
+        grad.addColorStop(0.5, "rgba(0,0,0,0)");
+        grad.addColorStop(1, "rgba(181,23,158,0.10)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x, gy-6, w, 10);
+        ctx.restore();
+      } else {
+        // ground/platform
+        const x = s.x, y = s.y, w = s.w, h = s.h;
+        ctx.save();
+
+        // top surface
+        const g = ctx.createLinearGradient(0, y, 0, y+h);
+        g.addColorStop(0, "rgba(255,255,255,0.10)");
+        g.addColorStop(1, "rgba(255,255,255,0.03)");
+        ctx.fillStyle = g;
+        roundRect(x, y, w, h, 10);
+        ctx.fill();
+
+        // stroke
+        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        ctx.lineWidth = 1;
+        roundRect(x, y, w, h, 10);
+        ctx.stroke();
+
+        // decorative pattern on ground
+        if(s.type === "ground"){
+          ctx.globalAlpha = 0.20;
+          ctx.fillStyle = "rgba(76,201,240,0.55)";
+          for(let i=0;i<w;i+=44){
+            ctx.fillRect(x + i + 14, y + 18, 10, 3);
+            ctx.fillRect(x + i + 28, y + 26, 12, 3);
+          }
+          ctx.globalAlpha = 1;
+        }
+
+        ctx.restore();
+      }
+    }
+
+    // soft ground shadow band
+    ctx.save();
+    ctx.globalAlpha = 0.30;
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fillRect(GAME.cameraX - 400, gy + 80, viewW + 1200, viewH - gy);
+    ctx.restore();
+  }
+
+  function drawCoin(x, y, r){
+    ctx.save();
+    const g = ctx.createRadialGradient(x-r*0.35, y-r*0.35, 2, x, y, r*1.4);
+    g.addColorStop(0, "rgba(255,255,255,0.95)");
+    g.addColorStop(0.25, "rgba(244,185,66,0.95)");
+    g.addColorStop(1, "rgba(244,185,66,0.12)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.25)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(x, y, r-1, 0, Math.PI*2);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.font = `800 ${Math.max(10, r+2)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("★", x, y+1);
+    ctx.restore();
+  }
+
+  function drawEnemy(e){
+    // Friendly-cartoon "asker" (no gore): helmet + shield, soft colors
+    ctx.save();
+    const x = e.x, y = e.y, w = e.w, h = e.h;
+
+    // shadow
+    ctx.globalAlpha = 0.25;
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.ellipse(x+w/2, y+h+6, w*0.48, 6, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // body
+    const bodyG = ctx.createLinearGradient(0, y, 0, y+h);
+    bodyG.addColorStop(0, "rgba(255,90,106,0.18)");
+    bodyG.addColorStop(1, "rgba(255,90,106,0.08)");
+    ctx.fillStyle = bodyG;
+    roundRect(x, y+10, w, h-10, 10);
+    ctx.fill();
+
+    // helmet
+    ctx.fillStyle = "rgba(255,255,255,0.16)";
+    roundRect(x+4, y+2, w-8, 14, 10);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.14)";
+    ctx.strokeRect(x+6, y+6, w-12, 6);
+
+    // face visor
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    roundRect(x+9, y+8, w-18, 8, 6);
+    ctx.fill();
+
+    // shield icon
+    ctx.fillStyle = "rgba(76,201,240,0.22)";
+    roundRect(x+10, y+20, 14, 14, 6);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.fillRect(x+15, y+24, 4, 6);
+
+    ctx.restore();
+  }
+
+  function drawPlayer(p){
+    // "İslami figür": modest tunic + cap, friendly
+    ctx.save();
+    const x = p.x, y = p.y, w = p.w, h = p.h;
+
+    // invuln blink
+    if(p.invuln > 0 && Math.floor(performance.now()/80) % 2 === 0){
+      ctx.globalAlpha = 0.45;
+    }
+
+    // shadow
+    ctx.globalAlpha *= 0.30;
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.ellipse(x+w/2, y+h+7, w*0.55, 7, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = (p.invuln > 0 && Math.floor(performance.now()/80) % 2 === 0) ? 0.45 : 1;
+
+    // body tunic
+    const tunic = ctx.createLinearGradient(0, y, 0, y+h);
+    tunic.addColorStop(0, "rgba(65,209,138,0.22)");
+    tunic.addColorStop(1, "rgba(65,209,138,0.10)");
+    ctx.fillStyle = tunic;
+    roundRect(x+4, y+14, w-8, h-14, 12);
+    ctx.fill();
+
+    // belt
+    ctx.fillStyle = "rgba(255,255,255,0.14)";
+    roundRect(x+8, y+28, w-16, 6, 6);
+    ctx.fill();
+
+    // head
+    ctx.fillStyle = "rgba(255,255,255,0.16)";
+    roundRect(x+8, y+2, w-16, 16, 10);
+    ctx.fill();
+
+    // cap (takke)
+    ctx.fillStyle = "rgba(76,201,240,0.20)";
+    roundRect(x+9, y+0, w-18, 10, 10);
+    ctx.fill();
+
+    // face (eyes)
+    ctx.fillStyle = "rgba(0,0,0,0.45)";
+    const eyeY = y+11;
+    const ex1 = x + (p.facing === 1 ? 17 : 14);
+    const ex2 = x + (p.facing === 1 ? 22 : 19);
+    ctx.fillRect(ex1, eyeY, 2, 3);
+    ctx.fillRect(ex2, eyeY, 2, 3);
+
+    // boots
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    roundRect(x+7, y+h-6, 10, 6, 4);
+    roundRect(x+w-17, y+h-6, 10, 6, 4);
+    ctx.fill();
+
+    // outline
+    ctx.strokeStyle = "rgba(255,255,255,0.10)";
+    ctx.lineWidth = 1;
+    roundRect(x+4, y+14, w-8, h-14, 12);
+    ctx.stroke();
+
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawForegroundHUD(viewW, viewH){
+    // progress bar for time
+    const pad = 16;
+    const barW = Math.min(420, viewW - 2*pad);
+    const barH = 10;
+    const x = pad;
+    const y = 14;
+
+    ctx.save();
+    ctx.globalAlpha = 0.65;
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    roundRect(x, y, barW, barH, 8);
+    ctx.fill();
+
+    const t = GAME.timeLeft / GAME.timeLimit;
+    const fillW = Math.max(0, barW * t);
+    const g = ctx.createLinearGradient(x, 0, x+barW, 0);
+    g.addColorStop(0, "rgba(76,201,240,0.75)");
+    g.addColorStop(1, "rgba(181,23,158,0.55)");
+    ctx.fillStyle = g;
+    roundRect(x, y, fillW, barH, 8);
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  function roundRect(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  // -----------------------------
+  // Initial state
+  // -----------------------------
+  resetWorld();
+  updateHUD();
+
+})();
+</script>
+</body>
+</html>
